@@ -1,0 +1,418 @@
+@import "tailwindcss";
+
+/* =====================================================
+   san 瞬写 官网品牌系统（对标 Typeless 极简黑白灰）
+   主色：#111111（文字）
+   背景：#fff / #f5f5f5
+   品牌色块：薄荷/紫/杏/浅蓝（用于功能区柔和背景）
+   ===================================================== */
+
+:root {
+  --background: #ffffff;
+  --foreground: #111111;
+  --muted: #4d4d4d;
+  --subtle: #777777;
+  --line: rgba(17, 17, 17, 0.08);
+  --line-strong: rgba(17, 17, 17, 0.12);
+
+  /* 品牌柔和色块（对标 Typeless 4 色） */
+  --accent-mint: #E8F5F1;
+  --accent-lilac: #F0E8F5;
+  --accent-peach: #FFF4E8;
+  --accent-sky: #E8F0FF;
+
+  /* 功能强调色（按钮 hover / 链接） */
+  --accent-blue: rgba(76, 88, 124, 1);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-line: var(--line);
+  --color-accent-mint: var(--accent-mint);
+  --color-accent-lilac: var(--accent-lilac);
+  --color-accent-peach: var(--accent-peach);
+  --color-accent-sky: var(--accent-sky);
+
+  /* 字体：英文 Inter（对标 Typeless）+ 中文 思源黑体 */
+  --font-sans: var(--font-inter), "PingFang SC", "Hiragino Sans GB",
+    "Source Han Sans CN", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "cv11", "ss01", "ss03";
+}
+
+/* 选区颜色 */
+::selection {
+  background: #111;
+  color: #fff;
+}
+
+/* 链接默认下划线去除 */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(17, 17, 17, 0.15);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(17, 17, 17, 0.3);
+}
+
+/* =====================================================
+   HeroDemo 动画 keyframes（对标 typeless.com 首页）
+   - caret-blink：光标闪烁
+   - wave-0..4：5 条波形 bar 不同步脉动
+   - progress-fill-4s：4 秒进度条
+   - demo-fade：8s 循环内的淡入淡出（0~6s 显示，6~7s 渐隐，7~8s 隐藏）
+   - typing-fade：文字渐入
+   - pulse-dot：状态点呼吸
+   ===================================================== */
+@keyframes caret-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+@keyframes wave-0 {
+  0%, 100% { height: 10px; }
+  50% { height: 28px; }
+}
+@keyframes wave-1 {
+  0%, 100% { height: 16px; }
+  50% { height: 34px; }
+}
+@keyframes wave-2 {
+  0%, 100% { height: 12px; }
+  50% { height: 30px; }
+}
+@keyframes wave-3 {
+  0%, 100% { height: 20px; }
+  50% { height: 14px; }
+}
+@keyframes wave-4 {
+  0%, 100% { height: 14px; }
+  50% { height: 26px; }
+}
+
+@keyframes progress-fill {
+  0% { width: 0%; }
+  50% { width: 100%; }
+  100% { width: 100%; }
+}
+
+@keyframes demo-fade {
+  /* 一直满显，无循环隐藏（避免 typewriter 0 字时整片白） */
+  0%, 100% { opacity: 1; }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+/* 8 个打字指示点：独立脉动（typeless 浮窗里的核心元素） */
+@keyframes typing-dot {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-3px); }
+}
+
+/* 4 个声波条 pattern（16 根 bar 循环复用这 4 种律动） */
+@keyframes voice-bar-0 {
+  0%, 100% { height: 4px; }
+  50% { height: 18px; }
+}
+@keyframes voice-bar-1 {
+  0%, 100% { height: 8px; }
+  50% { height: 24px; }
+}
+@keyframes voice-bar-2 {
+  0%, 100% { height: 6px; }
+  50% { height: 14px; }
+}
+@keyframes voice-bar-3 {
+  0%, 100% { height: 12px; }
+  50% { height: 6px; }
+}
+
+/* 卡片从下方滑入（typeless 首页 hero 动画） */
+@keyframes slide-up-in {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 打字机效果（width 0 → 100% + 12s 循环）
+ * 配合 steps(N, end) 实现"逐字"出现
+ * 0~20% width 0→100%（打字）
+ * 20~80% 保持 100%（停留）
+ * 80~92% opacity 1→0 + width 100%→0（渐隐 + 重置）
+ * 92~100% opacity 0→1（准备下一轮）
+ */
+@keyframes typewriter-width {
+  0% {
+    width: 0;
+    opacity: 1;
+  }
+  20% {
+    width: 100%;
+    opacity: 1;
+  }
+  80% {
+    width: 100%;
+    opacity: 1;
+  }
+  92% {
+    width: 100%;
+    opacity: 0;
+  }
+  93% {
+    width: 0;
+    opacity: 0;
+  }
+  99% {
+    width: 0;
+    opacity: 1;
+  }
+  100% {
+    width: 0;
+    opacity: 1;
+  }
+}
+
+/* 单个字符逐字出现 + 渐隐（自然打字）
+ * 每个字符的 animation-delay = startDelay + i*90ms
+ * 在 12s 循环里：
+ *   delay 时刻       → 字符从 0 变 1（淡入）
+ *   delay + 200ms    → 字符保持 1
+ *   80% 时刻 (9.6s)  → 字符开始渐隐
+ *   92% 时刻 (11s)  → 字符完全 0
+ *   99%~100%         → 准备下一轮
+ *
+ * 用百分比表达（相对于 12s 周期）：
+ *   假设 startDelay=500ms = 4.17%
+ *   i*90ms 在 12s 内 = 0.75% / 字
+ *   单字 fade-in 占 ~1.7% (200ms)
+ */
+@keyframes char-appear {
+  0% {
+    opacity: 0;
+  }
+  /* 字符出现时机：delay + i*90ms 时刻 = (4.17% + i*0.75%) */
+  1.7% {
+    opacity: 1;
+  }
+  /* 停留到 80% 时刻 */
+  80% {
+    opacity: 1;
+  }
+  /* 渐隐到 92% */
+  92% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* 父容器的整段渐隐（与单字渐隐同步，但多一层保险） */
+@keyframes typewriter-fade {
+  0% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 0;
+  }
+  99% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* 打字机容器：文字 + 伪元素光标
+ * ::after 是 inline-block 光标，跟文字同一 baseline
+ * 用 box-decoration-break: clone 让伪元素在 width 裁切时也跟随
+ * position: relative 父级提供定位
+ */
+.typewriter-caret {
+  position: relative;
+}
+.typewriter-caret::after {
+  content: "";
+  display: inline-block;
+  width: 0.05em;
+  height: 0.85em;
+  /* 用 negative margin 把光标"推"到文字基线位置
+   * margin-left 给光标和字之间一点间隙（不挤压）
+   * margin-bottom 把光标顶部往下挪到 baseline 处
+   */
+  margin-left: 0.08em;
+  margin-bottom: -0.85em;
+  background-color: #111;
+  /* baseline 对齐：光标底部 = 文字 baseline（字符脚） */
+  vertical-align: baseline;
+  /* 光标闪烁 */
+  animation: caret-blink 1s steps(2) infinite;
+}
+
+/* 自然打字效果：width 0→100% + steps(N) + 18s 循环
+ * steps(N, end) 让 width 按字符数跳跃
+ * 配合 overflow:hidden 让跳跃的部分不显示
+ * 循环节奏：
+ *   0~33%  打字（width 0→100% = 5.4s 打完 10 字 = 540ms/字，接近人类速度）
+ *   33~80% 停留（47% × 18s = 8.5s 停留看完整内容）
+ *   80~92% 渐隐（opacity 1→0 + width 100%→0）
+ *   92~100% 重置（width 0 + opacity 0→1 准备下一轮）
+ */
+@keyframes typewriter-typeout {
+  0% {
+    width: 0;
+    opacity: 1;
+  }
+  33% {
+    width: 100%;
+    opacity: 1;
+  }
+  80% {
+    width: 100%;
+    opacity: 1;
+  }
+  92% {
+    width: 100%;
+    opacity: 0;
+  }
+  93% {
+    width: 0;
+    opacity: 0;
+  }
+  99% {
+    width: 0;
+    opacity: 1;
+  }
+  100% {
+    width: 0;
+    opacity: 1;
+  }
+}
+
+/* 真实逐字出现动画：每个字通过 CSS variable 控制独立时机
+ * 0% → char-start%  : opacity 0（隐藏）
+ * char-start% → char-end% : opacity 0 → 1（淡入）
+ * char-end% → fade-start% : opacity 1（保持）
+ * fade-start% → fade-end% : opacity 1 → 0（渐隐）
+ * fade-end% → 100% : opacity 0（保持隐藏，等下一轮）
+ * 依赖 CSS @property 注册（让 var 在 keyframe 内可插值）
+ * @property --char-start {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+@property --char-end {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+@property --fade-start {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 80%;
+}
+@property --fade-end {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 92%;
+}
+*/
+
+/* =====================================================
+   App Marquee 跑马灯（对标 typeless.com "Works everywhere you write"）
+   - 两层 marquee 条带交错方向
+   - 使用 CSS animation，无 JS
+   ===================================================== */
+@keyframes marquee-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes marquee-right {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.marquee-track {
+  display: flex;
+  gap: 2rem;
+  flex-shrink: 0;
+  min-width: 200%;
+  animation-play-state: running;
+}
+.marquee-track-left {
+  animation: marquee-left 40s linear infinite;
+}
+.marquee-track-right {
+  animation: marquee-right 40s linear infinite;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* =====================================================
+   Section 入场动画（对标 typeless scroll reveal）
+   ===================================================== */
+@keyframes section-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =====================================================
+   渐变色光晕（对标 typeless hero 背景）
+   ===================================================== */
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* =====================================================
+   键盘 key 闪烁（对标 typeless 底部键盘动画）
+   ===================================================== */
+@keyframes key-shimmer {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
