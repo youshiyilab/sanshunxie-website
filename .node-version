@@ -1,0 +1,5 @@
+# Cloudflare Pages build config
+# 强制使用纯静态导出,不要 OpenNext adapter
+
+# 强制 Node 版本
+20
