@@ -1,5 +1,4 @@
 name = "sanshunxie-website"
 compatibility_date = "2024-09-23"
 pages_build_output_dir = "./out"
-# 明确禁用 Workers runtime(我们是 Pages 静态)
-# 不需要 wrangler deploy
+# 纯静态站点 - 不需要 Workers / wrangler deploy
