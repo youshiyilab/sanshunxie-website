@@ -2,6 +2,11 @@
   "name": "san-shunxie-website",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=9.0.0"
+  },
   "scripts": {
     "dev": "next dev -p 9890 -H 0.0.0.0",
     "build": "next build",
